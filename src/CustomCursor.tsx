@@ -1,12 +1,10 @@
-import React from 'react';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import './styles.css';
 
-export default function CustomCursor() {
-	const mainCursor = useRef<HTMLDivElement>();
-	const secondaryCursor = useRef<HTMLDivElement>();
-
+export function CustomCursor() {
+	const mainCursor = useRef<HTMLDivElement>(null);
+	const secondaryCursor = useRef<HTMLDivElement>(null);
 	const positionRef = useRef({
 		mouseX: 0,
 		mouseY: 0,
@@ -14,7 +12,7 @@ export default function CustomCursor() {
 		destinationY: 0,
 		distanceX: 0,
 		distanceY: 0,
-		key: null,
+		key: -1,
 	});
 
 	const setDestination = (x: number, y: number) => {
@@ -24,18 +22,21 @@ export default function CustomCursor() {
 
 	useEffect(() => {
 		const onMouseMove = ({ clientX, clientY }: MouseEvent) => {
-			positionRef.current.mouseX = clientX - secondaryCursor.current.clientWidth / 2;
-			positionRef.current.mouseY = clientY - secondaryCursor.current.clientHeight / 2;
+			if (mainCursor.current) {
+				const
+					mainCursorX = clientX - mainCursor.current.clientWidth / 2,
+					mainCursorY = clientY - mainCursor.current.clientHeight / 2;
 
-			mainCursor.current.style.opacity = '1';
-			secondaryCursor.current.style.opacity = '1';
+				mainCursor.current.style.opacity = '1';
+				mainCursor.current.style.transform =
+					`translate3d(${mainCursorX}px, ${mainCursorY}px, 0)`;
+			}
 
-			mainCursor.current.style.transform =
-				`translate3d(
-					${clientX - mainCursor.current.clientWidth / 2}px,
-					${clientY - mainCursor.current.clientHeight / 2}px,
-					0
-				)`;
+			if (secondaryCursor.current) {
+				secondaryCursor.current.style.opacity = '1';
+				positionRef.current.mouseX = clientX - secondaryCursor.current.clientWidth / 2;
+				positionRef.current.mouseY = clientY - secondaryCursor.current.clientHeight / 2;
+			}
 		};
 
 		document.addEventListener('mousemove', onMouseMove);
@@ -58,12 +59,10 @@ export default function CustomCursor() {
 				distanceY,
 			} = positionRef.current;
 
-			secondaryCursor.current.style.transform =
-				`translate3d(
-					${destinationX}px,
-					${destinationY}px,
-					0
-				)`;
+			if (secondaryCursor.current) {
+				secondaryCursor.current.style.transform =
+					`translate3d(${destinationX}px, ${destinationY}px, 0)`;
+			}
 
 			if (!destinationX || !destinationY) {
 				setDestination(mouseX, mouseY);

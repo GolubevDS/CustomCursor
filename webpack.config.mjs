@@ -1,6 +1,5 @@
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -8,22 +7,24 @@ const __dirname = path.dirname(__filename);
 export default (_, argv) => {
 	return {
 		mode: argv.mode || 'production',
-		entry: './src/index.tsx',
-		devtool: 'source-map',
+		entry: './src/index.ts',
 		output: {
 			path: path.join(__dirname, '/dist'),
 			filename: 'index.js',
+			libraryTarget: 'umd',
+			clean: true,
 		},
 		devServer: {
 			static: './dist',
 		},
+		resolve: {
+			extensions: ['.tsx', '.ts'],
+		},
+		externals: {
+			react: 'react',
+		},
 		module: {
 			rules: [
-				{
-					test: /\.jsx?$/,
-					exclude: /node_modules/,
-					loader: 'babel-loader',
-				},
 				{
 					test: /\.tsx?$/,
 					use: 'ts-loader',
@@ -35,13 +36,5 @@ export default (_, argv) => {
 				},
 			],
 		},
-		resolve: {
-			extensions: ['.tsx', '.ts', '.js'],
-		},
-		plugins: [
-			new HtmlWebpackPlugin({
-				template: './src/index.html',
-			}),
-		],
 	};
 }
