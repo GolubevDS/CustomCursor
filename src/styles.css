@@ -1,0 +1,33 @@
+html, body {
+    background-color: white;
+}
+
+* {
+    cursor: none;
+}
+
+.main-cursor,
+.secondary-cursor {
+    mix-blend-mode: difference;
+    z-index: 10000;
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity .3s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.main-cursor {
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    background-color: white;
+}
+
+.secondary-cursor {
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    border: 1px solid white;
+}
